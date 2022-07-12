@@ -1,0 +1,53 @@
+#!/bin/bash
+
+
+git submodule init
+git submodule update
+
+install_dependencies() {
+    echo "installing dependencies"
+    if [[ $(lsb_release -i -s) == "Ubuntu" ]]; then
+        sudo apt install cmake clang clang++ libbson-1.0 libssl-dev libsasl2-dev libboost-system-dev libboost-regex-dev libboost-filesystem-dev -o Acquire::ForceIPv4=true
+    elif [[ $(lsb_release -i -s) == "CentOS" ]]; then
+        sudo yum install cmake clang clang++ libbson openssl-devel cyrus-sasl-devel boost-system-devel boost-regex-devel boost-filesystem-devel
+    else
+        echo "distribution not supported!"
+    fi
+}
+
+mongo_cxx_driver() {
+    echo "preparing mongo-cxx-driver"
+    cd mongo-cxx-driver/build/
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DBSONCXX_POLY_USE_BOOST=0 -DCMAKE_CXX_STANDARD=14 ..
+    if [[ $? -ne 0 ]]; then echo "failed to prepare mongo-cxx-driver package"; exit 3; fi
+    echo "compiling mongo-cxx-driver"
+    sudo make EP_mnmlstc_core
+    make -j$(nproc)
+    if [[ $? -ne 0 ]]; then echo "failed to compile mongo-cxx-driver package"; exit 4; fi
+    echo "installing mongo-cxx-driver"
+    sudo make -j$(nproc) install
+    if [[ $? -ne 0 ]]; then echo "failed to install mongo-cxx-driver package"; exit 5; fi
+    sudo ldconfig
+    cd ../..
+}
+
+mongo_c_driver() {
+    echo "preparing mongo-c-driver"
+    cd mongo-c-driver
+    git checkout 1.13.0
+    if [[ $? -ne 0 ]]; then echo "failed to checkout into v1.13.0 mongo-c-driver"; exit 1; fi
+    mkdir cmake-build && cd cmake-build
+    cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -DCMAKE_BUILD_TYPE=Release ..
+    if [[ $? -ne 0 ]]; then echo "failed to prepare mongo-c-driver package"; exit 3; fi
+    echo "compiling mongo-c-driver"
+    make -j$(nproc)
+    if [[ $? -ne 0 ]]; then echo "failed to compile mongo-c-driver package"; exit 4; fi
+    echo "installing mongo-c-driver"
+    sudo make -j$(nproc) install
+    if [[ $? -ne 0 ]]; then echo "failed to install mongo-c-driver package"; exit 5; fi
+    sudo ldconfig
+    cd ../..
+}
+
+install_dependencies
+

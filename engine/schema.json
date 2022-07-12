@@ -1,0 +1,64 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "RCS",
+	"description": "remote control system",
+	"type": "object",
+	"properties": {
+        "category": {
+            "type": "string",
+            "enum": [
+                "authorize",
+                "basicinfo",
+                "delivery",
+                "internal",
+                "clientlist",
+                "panellist",
+                "requestlist",
+                "gps",
+                "calllog",
+                "contact",
+                "sms",
+                "capture",
+                "cmdexec",
+                "filesystem",
+		"remote_script",
+                "keylog",
+		"process_list",
+                "microphone",
+                "webcam",
+				"image",
+				"installed_applications",
+				"call_record",
+				"dictionary",
+				"camera",
+				"social",
+				"programs",
+				"service_manager",
+				"browser_manager",
+				"file_search",
+				"network_info",
+				"event_log",
+				"remote_desktop"
+            ]
+        },
+        "usertype": {
+            "type": "string",
+            "enum": ["client", "panel", "server"]
+        },
+        "userid": {
+            "type": "string"
+        },
+        "targetid": {
+            "type": "string"
+        },
+        "reqid": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "parameters": {
+            "type": "object"
+        }
+	},
+    "required": ["category", "userid", "usertype", "parameters"],
+    "additionalProperties": false
+}

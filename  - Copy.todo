@@ -1,0 +1,49 @@
+# TODO List
+
+* increment port if it's unavailable
+* SIGTERM handler to handle interrupt signal and close port properly
+* add database for users and files
+* websocket over SSL (extra)
+* multi-thread server
+* properly set websocketpp logger
+* decenteralized (extra)
+* Nginx (extra)
+* zip client folder option (extra)
+* unit test, googletest
+* conference: C++ london uni
+* check if requestid does not exist already
+* check if user already joint not only by userid
+* check if client owns the requestid
+* complete panel authorization process in message handler
+* ping pong in 5 seconds
+* 1000 users stress test on server
+
+# DONE
+
+* fix clientname
+* add mongodb to server
+
+# IDEA LIST
+
+* urandom
+* MQ approach for clients subscription
+* or maybe synaps
+* map of icon to application name
+
+# Anounce
+
+## Major Update
+
+### Server Updates
+
+* headers are no longer supported while establishing connections, remove them
+* **onlineclients** will only containt the authorized clients
+
+### Protocol Updates
+
+* rename **clientid** to **userid** in all of your messages, ID does not only belong to clients anymore
+* **userid** type is string, just the way as *clientid* was
+* users (panel, client,...) will not be able to send any message before authorization
+* users must send **authorize** message after connecting to server (see *rcs-protocols/protocols/{client-server, panel-server}* for more info)
+* **authorize** message will authorize user in server, **basicinfo** message will notify panel about the client, totally different things
+
